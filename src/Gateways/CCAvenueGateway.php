@@ -20,14 +20,14 @@ class CCAvenueGateway implements PaymentGatewayInterface {
 
     function __construct()
     {
-        $this->workingKey = Config::get('indipay.ccavenue.workingKey');
-        $this->accessCode = Config::get('indipay.ccavenue.accessCode');
-        $this->testMode = Config::get('indipay.testMode');
-        $this->parameters['merchant_id'] = Config::get('indipay.ccavenue.merchantId');
-        $this->parameters['currency'] = Config::get('indipay.ccavenue.currency');
-        $this->parameters['redirect_url'] = url(Config::get('indipay.ccavenue.redirectUrl'));
-        $this->parameters['cancel_url'] = url(Config::get('indipay.ccavenue.cancelUrl'));
-        $this->parameters['language'] = Config::get('indipay.ccavenue.language');
+        $this->workingKey = Config::get('ggpay.ccavenue.workingKey');
+        $this->accessCode = Config::get('ggpay.ccavenue.accessCode');
+        $this->testMode = Config::get('ggpay.testMode');
+        $this->parameters['merchant_id'] = Config::get('ggpay.ccavenue.merchantId');
+        $this->parameters['currency'] = Config::get('ggpay.ccavenue.currency');
+        $this->parameters['redirect_url'] = url(Config::get('ggpay.ccavenue.redirectUrl'));
+        $this->parameters['cancel_url'] = url(Config::get('ggpay.ccavenue.cancelUrl'));
+        $this->parameters['language'] = Config::get('ggpay.ccavenue.language');
     }
 
     public function getEndPoint()
@@ -58,7 +58,7 @@ class CCAvenueGateway implements PaymentGatewayInterface {
     {
 
         Log::info('Indipay Payment Request Initiated: ');
-        return View::make('indipay::ccavenue')->with('encRequest',$this->encRequest)
+        return View::make('sunil::ccavenue')->with('encRequest',$this->encRequest)
                              ->with('accessCode',$this->accessCode)
                              ->with('endPoint',$this->getEndPoint());
 

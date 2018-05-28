@@ -31,6 +31,24 @@ Route::get('paynow/{payment_mode}', function($request){
 
 });
 
+Route::post('/indipay/response',function(Request $request){
+    if(isset($request->Order)){
+        $response = Ggpay::gateway($request->Domain)->response($request);
+        if(is_array($response))
+            $response['payment_method']='Citrus';
+
+    }elseif (isset($request->productinfo)){
+        $response = Ggpay::gateway('PayUMoney')->response($request);
+        if(is_array($response))
+            $response['payment_method']='PayUMoney';
+    }else{
+        $response = Ggpay::response($request);
+        if(is_array($response))
+            $response['payment_method']='Other';
+    }
+    dd($response);
+});
+
 //Route::post('/indipay/response',function(Request $request){
 //
 ////    $response = Ggpay::gateway('CitrusPopup')->response($request);

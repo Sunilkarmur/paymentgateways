@@ -18,15 +18,15 @@ class CitrusPopupGateway implements PaymentGatewayInterface {
 
     function __construct()
     {
-        $this->vanityUrl = Config::get('indipay.citrus.vanityUrl');
-        $this->secretKey = Config::get('indipay.citrus.secretKey');
-        $this->testMode = Config::get('indipay.testMode');
+        $this->vanityUrl = Config::get('ggpay.citrus.vanityUrl');
+        $this->secretKey = Config::get('ggpay.citrus.secretKey');
+        $this->testMode = Config::get('ggpay.testMode');
 
         $this->parameters['merchantTxnId'] = $this->generateTransactionID();
         $this->parameters['vanityUrl'] = $this->vanityUrl;
         $this->parameters['currency'] = 'INR';
-        $this->parameters['returnUrl'] = url(Config::get('indipay.citrus.returnUrl'));
-        $this->parameters['notifyUrl'] = url(Config::get('indipay.citrus.notifyUrl'));
+        $this->parameters['returnUrl'] = url(Config::get('ggpay.citrus.returnUrl'));
+        $this->parameters['notifyUrl'] = url(Config::get('ggpay.citrus.notifyUrl'));
         $this->parameters['firstName'] = '';
         $this->parameters['lastName'] = '';
         $this->parameters['email'] = '';
@@ -131,6 +131,7 @@ class CitrusPopupGateway implements PaymentGatewayInterface {
      */
     protected function decrypt($response)
     {
+        dd($response);
         $hash_string = '';
         $hash_string .= $response['TxId'];
         $hash_string .= $response['TxStatus'];

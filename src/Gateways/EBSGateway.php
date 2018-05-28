@@ -18,18 +18,18 @@ class EBSGateway implements PaymentGatewayInterface {
 
     function __construct()
     {
-        $this->secretKey = Config::get('indipay.ebs.secretKey');
-        $this->testMode = Config::get('indipay.testMode');
+        $this->secretKey = Config::get('ggpay.ebs.secretKey');
+        $this->testMode = Config::get('ggpay.testMode');
 
         $this->parameters['channel'] = 0;       // Standard
-        $this->parameters['account_id'] = Config::get('indipay.ebs.account_id');
+        $this->parameters['account_id'] = Config::get('ggpay.ebs.account_id');
         $this->parameters['reference_no'] = $this->generateTransactionID();
         $this->parameters['currency'] = 'INR';
         $this->parameters['mode'] = 'LIVE';
         if($this->testMode){
             $this->parameters['mode'] = 'TEST';
         }
-        $this->parameters['return_url'] = url(Config::get('indipay.ebs.return_url'));
+        $this->parameters['return_url'] = url(Config::get('ggpay.ebs.return_url'));
 
 
     }
@@ -58,7 +58,7 @@ class EBSGateway implements PaymentGatewayInterface {
     {
 
         Log::info('Indipay Payment Request Initiated: ');
-        return View::make('indipay::ebs')->with('hash',$this->hash)
+        return View::make('sunil::ebs')->with('hash',$this->hash)
                              ->with('parameters',$this->parameters)
                              ->with('endPoint',$this->getEndPoint());
 

@@ -45,38 +45,32 @@ class GGpay {
     public function gateway($name)
     {
 
-        if (env('IS_DEFAULT_GATEWAY')==TRUE){
-            $className =  'Sunil\\Payments\\Gateways\\'.env('DEFAULT_GATEWAY');
+        switch($name)
+        {
+            case 'CCAvenue':
+                $this->gateway = new CCAvenueGateway();
+                break;
 
-            $this->gateway = new $className;
-        }else{
-            switch($name)
-            {
-                case 'CCAvenue':
-                    $this->gateway = new CCAvenueGateway();
-                    break;
+            case 'PayUMoney':
+                $this->gateway = new PayUMoneyGateway();
+                break;
 
-                case 'PayUMoney':
-                    $this->gateway = new PayUMoneyGateway();
-                    break;
+            case 'EBS':
+                $this->gateway = new EBSGateway();
+                break;
 
-                case 'EBS':
-                    $this->gateway = new EBSGateway();
-                    break;
+            case 'Citrus':
+                $this->gateway = new CitrusGateway();
+                break;
 
-                case 'Citrus':
-                    $this->gateway = new CitrusGateway();
-                    break;
+            case 'CitrusPopup':
+                $this->gateway = new CitrusPopupGateway();
+                break;
 
-                case 'CitrusPopup':
-                    $this->gateway = new CitrusPopupGateway();
-                    break;
+            case 'InstaMojo':
+                $this->gateway = new InstaMojoGateway();
+                break;
 
-                case 'InstaMojo':
-                    $this->gateway = new InstaMojoGateway();
-                    break;
-
-            }
         }
 
         return $this;

@@ -17,9 +17,9 @@ class MockerGateway implements PaymentGatewayInterface {
 
     function __construct()
     {
-        $this->service = Config::get('indipay.mocker.service');
-        $this->testMode = Config::get('indipay.testMode');
-        $this->parameters['redirect_url'] = url(Config::get('indipay.mocker.redirect_url'));
+        $this->service = Config::get('ggpay.mocker.service');
+        $this->testMode = Config::get('ggpay.testMode');
+        $this->parameters['redirect_url'] = url(Config::get('ggpay.mocker.redirect_url'));
     }
 
     public function getEndPoint()
@@ -44,7 +44,7 @@ class MockerGateway implements PaymentGatewayInterface {
     {
 
         Log::info('Indipay Payment Request Initiated: ');
-        return View::make('indipay::mocker')->with('data',$this->parameters)
+        return View::make('sunil::mocker')->with('data',$this->parameters)
                                             ->with('end_point',$this->getEndPoint());
 
     }

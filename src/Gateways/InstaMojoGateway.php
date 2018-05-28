@@ -21,11 +21,11 @@ class InstaMojoGateway implements PaymentGatewayInterface {
 
     function __construct()
     {
-        $this->testMode = Config::get('indipay.testMode');
-        $this->api_key = Config::get('indipay.instamojo.api_key');
-        $this->auth_token = Config::get('indipay.instamojo.auth_token');
+        $this->testMode = Config::get('ggpay.testMode');
+        $this->api_key = Config::get('ggpay.instamojo.api_key');
+        $this->auth_token = Config::get('ggpay.instamojo.auth_token');
 
-        $this->parameters['redirect_url'] = url(Config::get('indipay.instamojo.redirectUrl'));
+        $this->parameters['redirect_url'] = url(Config::get('ggpay.instamojo.redirectUrl'));
     }
 
     public function getEndPoint($param='')
@@ -67,7 +67,7 @@ class InstaMojoGateway implements PaymentGatewayInterface {
 
         Log::info('Indipay Payment Request Initiated: ');
         //dd($this->response->payment_request->longurl);
-        return View::make('indipay::instamojo')->with('longurl',$this->response->payment_request->longurl);
+        return View::make('sunil::instamojo')->with('longurl',$this->response->payment_request->longurl);
 
     }
 

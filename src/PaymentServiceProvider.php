@@ -34,7 +34,8 @@ class PaymentServiceProvider extends ServiceProvider
     {
         //
 
-        $gateway = Config::get('indipay.gateway');
+        $gateway = Config::get('ggpay.gateway');
+
         $this->app->bind('indipay', 'Sunil\Payments\GGpay');
 
         $this->app->bind('Sunil\Payments\Gateways\PaymentGatewayInterface','Sunil\Payments\Gateways\\'.$gateway.'Gateway');
