@@ -17,7 +17,7 @@ class PaymentServiceProvider extends ServiceProvider
         //
         include __DIR__.'/routes.php';
         $this->publishes([
-            __DIR__.'/config/ggpay.php' => base_path('config/ggpay.php'),
+            __DIR__.'/config/config.php' => base_path('config/ggpay.php'),
             __DIR__.'/views/middleware.blade.php' => base_path('app/Http/Middleware/VerifyCsrfMiddleware.php'),
         ]);
 
