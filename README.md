@@ -1,45 +1,94 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+Sunil Pay
+The Laravel 5 Package for Indian Payment Gateways. Currently supported gateway: CCAvenue, PayUMoney, EBS, CitrusPay ,ZapakPay (Mobikwik), Mocker
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+For Laravel 4.2 Package Click Here
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+Installation
+Step 1: Install package using composer.json add some code
+	
+	"repository":[
+		{
+			type:"vcs",
+			url:"https://sunilahir880@bitbucket.org/sunilahir880/sunil.git"
+		}
+	]
+    "require": {
+        "sunil/payments": "dev/master#1.*",
+    },
+	"autoload": {
+      "psr-4": {
+        "Sunil\\Payments\\": "src/"
+      }
+    }
 
----
 
-## Edit a file
+ composer update
+    
+Step 2: Add the service provider to the config/app.php file in Laravel (Optional for Laravel 5.5)
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+    Sunil\Payments\PaymentServiceProvider::class,
+Step 3: Add an alias for the Facade to the config/app.php file in Laravel (Optional for Laravel 5.5)
 
----
 
-## Create a file
+    'Payments' => Sunil\Payments\Facades\Ggpay::class,
+Step 4: Publish the config & Middleware by running in your terminal
 
-Next, you’ll add a new file to this repository.
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+    php artisan vendor:publish
+Step 5: Modify the app\Http\Kernel.php to use the new Middleware. This is required so as to avoid CSRF verification on the Response Url from the payment gateways. You may adjust the routes in the config file config/ggpay.php to disable CSRF on your gateways response routes.
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
 
----
+    App\Http\Middleware\VerifyCsrfToken::class,
+to
 
-## Clone a repository
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+    App\Http\Middleware\VerifyCsrfMiddleware::class,
+Usage
+Edit the config/ggpay.php. Set the appropriate Gateway and its parameters. Then in your code... 
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+ use Sunil\Payments\Facades\Ggpay;  
+Initiate Purchase Request and Redirect using the default gateway:-
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+      /* All Required Parameters by your Gateway */
+      
+     $parameters = [
+        'tid' => $request->tid,
+        'order_id' => $request->order_id,
+        'payment_mode' => $payment_mode,
+        'amount' => $request->amount,
+        'firstname' => $request->firstname,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'productinfo' => $request->order_id, // For the Payumoney Gateway Optional Paramater
+    ];
+    // gateway = CCAvenue / PayUMoney / EBS / Citrus / InstaMojo / ZapakPay / Mocker / CitrusPopup
+    if(empty($payment_mode) || env('IS_DEFAULT_GATEWAY')==true)
+        $order = Ggpay::prepare($parameters);
+    else
+        $order = Ggpay::gateway($payment_mode)->prepare($parameters);
+    return Ggpay::process($order);
+
+Get the Response from the Gateway (Add the Code to the Redirect Url Set in the config file. Also add the response route to the remove_csrf_check config item to remove CSRF check on these routes.):-
+
+ 
+    public function response(Request $request)
+    
+    {
+        if(isset($request->Order)){
+        $response = Ggpay::gateway($request->Domain)->response($request);
+        if(is_array($response))
+            $response['payment_method']='Citrus';
+    }elseif (isset($request->productinfo)){
+        $response = Ggpay::gateway('PayUMoney')->response($request);
+        if(is_array($response))
+            $response['payment_method']='PayUMoney';
+    }else{
+        $response = Ggpay::response($request);
+        if(is_array($response))
+            $response['payment_method']='Other';
+    }
+    dd($response);
+
+    
+    } 
