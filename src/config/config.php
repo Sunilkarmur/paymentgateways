@@ -12,7 +12,7 @@ return [
 
     'gateway' => env('DEFAULT_GATEWAY'),                // Replace with the name of default gateway you want to use
 
-    'testMode'  => env('PAYMENT_MODE'),                  // True for Testing the Gateway [For production false]
+    'testMode'  => env('PAYMENT_MODE'),                   // True for Testing the Gateway [For production false]
 
     'ccavenue' => [                         // CCAvenue Parameters
         'merchantId'  => env('INDIPAY_MERCHANT_ID', ''),

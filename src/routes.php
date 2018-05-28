@@ -1,31 +1,32 @@
 <?php
 use Sunil\Payments\Facades\Ggpay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Sunil\Payments\Exceptions\IndipayParametersMissingException;
 
-Route::get('paynow/{payment_mode}', function($request){
+Route::post('paynow/{payment_mode}', function(Request $request,$payment_mode){
+
+
 
     $parameters = [
+        'tid' => $request->tid,
 
+        'order_id' => $request->order_id,
+        'payment_mode' => $payment_mode,
 
-        'tid' => '1233221223322',
-
-        'order_id' => '1232212',
-        'payment_mode' => $request,
-
-        'amount' => 1.00,
-        'firstname' => 'Sunil',
-        'email' => 'sunilahir880@gmail.com',
-        'phone' => '8128273971',
-        'productinfo' => '1232212', // For the Payumoney Gateway Optional Paramater
+        'amount' => $request->amount,
+        'firstname' => $request->firstname,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'productinfo' => $request->order_id, // For the Payumoney Gateway Optional Paramater
 
     ];
 
     // gateway = CCAvenue / PayUMoney / EBS / Citrus / InstaMojo / ZapakPay / Mocker / CitrusPopup
-//    if(empty($request)){
-        $order = Ggpay::gateway($request)->prepare($parameters);
-//    }else{
-//        $order = Ggpay::gateway($request)->prepare($parameters);
-//    }
+    if(empty($payment_mode) || env('IS_DEFAULT_GATEWAY')==true)
+        $order = Ggpay::prepare($parameters);
+    else
+        $order = Ggpay::gateway($payment_mode)->prepare($parameters);
 
     return Ggpay::process($order);
 
