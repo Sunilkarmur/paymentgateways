@@ -1,7 +1,7 @@
 Sunil Pay
-The Laravel 5 Package for Indian Payment Gateways. Currently supported gateway: CCAvenue, PayUMoney, EBS, CitrusPay ,ZapakPay (Mobikwik), Mocker
+The Laravel 5 Package for Indian Payment Gateways. Currently supported gateway: CCAvenue, PayUMoney, EBS, CitrusPay ,ZapakPay (Mobikwik), Mocker and Paypal
 
-For Laravel 4.2 Package Click Here
+For Laravel >= 5.4  Package Click Here
 
 Installation
 Step 1: Install package using composer.json add some code
@@ -53,20 +53,22 @@ Initiate Purchase Request and Redirect using the default gateway:-
       /* All Required Parameters by your Gateway */
       
      $parameters = [
-        'tid' => $request->tid,
-        'order_id' => $request->order_id,
-        'payment_mode' => $payment_mode,
-        'amount' => $request->amount,
-        'firstname' => $request->firstname,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'productinfo' => $request->order_id, // For the Payumoney Gateway Optional Paramater
-    ];
-    // gateway = CCAvenue / PayUMoney / EBS / Citrus / InstaMojo / ZapakPay / Mocker / CitrusPopup
+                'tid' =>uniqid(),
+                'order_id' => '123',
+                'payment_mode' => <Your Payment Gateway Name>,
+                'amount' => 1.00,
+                'firstname' => 'Sunil',
+                'lastname' => 'Karmur',
+                'email' => 'sunilahir880@gmail.com',
+                'phone' => '8128273971',
+                'productinfo' => '<Your OrderId or Item Name>', // For the Payumoney Gateway Optional Paramater
+                'domain' => '<Your Payment Gateway Name>',
+            ];
+    // gateway = CCAvenue / PayUMoney / EBS / Citrus / InstaMojo / ZapakPay / Mocker / CitrusPopup / Paypal
     if(empty($payment_mode) || env('IS_DEFAULT_GATEWAY')==true)
         $order = Ggpay::prepare($parameters);
     else
-        $order = Ggpay::gateway($payment_mode)->prepare($parameters);
+        $order = Ggpay::gateway(<Your Payment Gateway Name>)->prepare($parameters);
     return Ggpay::process($order);
 
 Get the Response from the Gateway (Add the Code to the Redirect Url Set in the config file. Also add the response route to the remove_csrf_check config item to remove CSRF check on these routes.):-
@@ -83,8 +85,11 @@ Get the Response from the Gateway (Add the Code to the Redirect Url Set in the c
         $response = Ggpay::gateway('PayUMoney')->response($request);
         if(is_array($response))
             $response['payment_method']='PayUMoney';
+    }else if(isset($request->payment_mode) && $request->payment_mode=='Paypal'){
+    	$response = Ggpay::response($request); 
+        // Paypal Response
     }else{
-        $response = Ggpay::response($request);
+        $response = Ggpay::response($request); 
         if(is_array($response))
             $response['payment_method']='Other';
     }
@@ -92,3 +97,34 @@ Get the Response from the Gateway (Add the Code to the Redirect Url Set in the c
 
     
     } 
+    
+
+Add to environment variable .env file
+    
+    PAYMENT_MODE=true
+    DEFAULT_GATEWAY=CitrusPopup
+    IS_DEFAULT_GATEWAY=false
+    
+    #Citrus Merchant Credential
+    INDIPAY_CITRUS_VANITY_URL=<Citrus Payment VANITY URL>
+    INDIPAY_WORKING_KEY=<Citrus Payment Working Key>
+    INDIPAY_SUCCESS_URL=http://localhost/payment_integration_demo/public/indipay/response
+    INDIPAY_SUCCESS_URL=http://localhost/payment_integration_demo/public/indipay/response
+    
+    #payumoney Merchant Credential
+    INDIPAY_MERCHANT_KEY=gUWQRy3Y
+    INDIPAY_SALT=Y2wMsSbL4X
+    INDIPAY_WORKING_KEY=MISJh5xXxyyfdfmKYawmBVQTTORX8nj2qd/W/TfEXIg=
+    INDIPAY_SUCCESS_URL=http://localhost/payment_integration_demo/public/indipay/response
+    INDIPAY_FAILURE_URL=http://localhost/payment_integration_demo/public/indipay/response
+    
+    #paypal Payment Gateway Credential
+    PAYPAL_CLIENT_SANBOX=AZfQEnIIPdhoYe_VaFQv7U_UExCuVhzlQ1k8bVRb85F81_tr33f_L7UMX3o2Z8KJf6pm9Z3ipmdJ34QO
+    PAYPAL_SECRET_SANBOX=EBbtN4OHIIJZbm9mim5fRQ1ML9HbJkotbmwOUlE4yiqPJPP3-YpBVuaC7WTgskY4gThbEJOL7CQFE7Jn
+    
+    PAYPAL_CLIENT_PRODUCTION=AZfQEnIIPdhoYe_VaFQv7U_UExCuVhzlQ1k8bVRb85F81_tr33f_L7UMX3o2Z8KJf6pm9Z3ipmdJ34QO
+    PAYPAL_SECRET_PRODUCTION=EBbtN4OHIIJZbm9mim5fRQ1ML9HbJkotbmwOUlE4yiqPJPP3-YpBVuaC7WTgskY4gThbEJOL7CQFE7Jn
+        
+    PAYPAL_MODE=sandbox  // sandbox | production
+    PAYPAL_RETURN_URL=http://localhost/payment_integration_demo/public/indipay/response
+    PAYPAL_CANCEL_URL=http://localhost/payment_integration_demo/public/indipay/response
